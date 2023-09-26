@@ -88,6 +88,41 @@ namespace CapaDatos
             return idAutogenerado;
         }
 
+        public int Registrar2(Usuario usuario, out string mensaje)
+        {
+            int idAutogenerado = 0;
+            mensaje = string.Empty;
+
+            try
+            {
+                using (SqlConnection oConexion = new SqlConnection(Conexion.cn))
+                {
+                    SqlCommand cmd = new SqlCommand("sp_RegistrarUsuario2", oConexion);
+                    cmd.Parameters.AddWithValue("nombres", usuario.Nombres);
+                    cmd.Parameters.AddWithValue("apellidos", usuario.Apellidos);
+                    cmd.Parameters.AddWithValue("correo", usuario.Correo);
+                    cmd.Parameters.AddWithValue("activo", usuario.Activo);
+                    cmd.Parameters.AddWithValue("clave", usuario.Clave);
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    oConexion.Open();
+
+                    cmd.ExecuteNonQuery();
+
+                    idAutogenerado = Convert.ToInt32(cmd.Parameters["resultado"].Value);
+                    mensaje = cmd.Parameters["mensaje"].Value.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                idAutogenerado = 0;
+                mensaje = "Ocurrió un error inesperado: " + ex.Message;
+            }
+
+            return idAutogenerado;
+        }
+
         public bool Editar(Usuario usuario, out string mensaje)
         {
             bool resultado = false;
