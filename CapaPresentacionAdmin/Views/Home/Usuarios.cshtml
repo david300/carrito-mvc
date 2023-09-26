@@ -158,6 +158,8 @@
                 dataType: 'json',
                 contentType: 'application/json; charset=utf-8',
                 success: function (response) {
+                    $(".modal-body").LoadingOverlay("hide");
+
                     if (usuario.IdUsuario == 0) {
                         if (response.resultado != 0) {
                             usuario.IdUsuario = response.resultado;
@@ -179,8 +181,16 @@
                         }
                     }
                 },
-                error: function (error) { },
-                beforeSend: function () { }
+                error: function (error) {
+                    $(".modal-body").LoadingOverlay("hide");
+                },
+                beforeSend: function () {
+                    $(".modal-body").LoadingOverlay("show", {
+                        imageRefactor: 2,
+                        text: "Cargando...",
+                        size: 14
+                    });
+                }
             });
         }
 
