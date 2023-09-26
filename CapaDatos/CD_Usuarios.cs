@@ -160,6 +160,40 @@ namespace CapaDatos
             return resultado;
         }
 
+        public bool EditarUsuario(Usuario usuario, out string mensaje)
+        {
+            bool resultado = false;
+            mensaje = string.Empty;
+
+            try
+            {
+                using (SqlConnection oConexion = new SqlConnection(Conexion.cn))
+                {
+                    SqlCommand cmd = new SqlCommand("sp_EditarUsuario2", oConexion);
+                    cmd.Parameters.AddWithValue("idUsuario", usuario.IdUsuario);
+                    cmd.Parameters.AddWithValue("nombres", usuario.Nombres);
+                    cmd.Parameters.Add("resultado", SqlDbType.Int).Direction = ParameterDirection.Output;
+                    cmd.Parameters.Add("mensaje", SqlDbType.Int).Direction = ParameterDirection.Output;
+
+                    cmd.CommandType = CommandType.StoredProcedure;
+
+                    oConexion.Open();
+
+                    cmd.ExecuteNonQuery();
+
+                    resultado = Convert.ToInt32(cmd.Parameters["resultado"].Value) == 1 ? true : false;
+                    mensaje = cmd.Parameters["mensaje"].Value.ToString();
+                }
+            }
+            catch (Exception ex)
+            {
+                resultado = false;
+                mensaje = "Ocurrió un error inesperado: " + ex.Message;
+            }
+
+            return resultado;
+        }
+
         public bool Eliminar(int idUsuario, out string mensaje)
         {
             bool resultado = false;
